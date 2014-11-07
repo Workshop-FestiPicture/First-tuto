@@ -80,4 +80,31 @@ class ShowsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  # POST /shows/1/book.json
+  def book
+    @booking = Booking.new(booking_params)
+    @booking.show = @show
+
+    respond_to do |format|
+      if @booking.save
+        format.json
+      else
+        format.json { render json: @booking.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  private
+    def set_show
+      @show = Show.find(params[:id])
+    end
+
+    def show_params
+      params.require(:show).permit(:name, :location, :description, :capacity, :price, :image, :date)
+    end
+    
+    def booking_params
+      params.require(:booking).permit(:user_name, :number)
+    end
 end
